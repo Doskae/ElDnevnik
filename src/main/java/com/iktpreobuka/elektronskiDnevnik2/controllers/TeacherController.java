@@ -261,6 +261,13 @@ public class TeacherController {
 		return teacherDao.seeMarksOfStudent(teacherId, marks);
 	}
 
+	/**
+	 * brise ocenu uceniku iz predmeta
+	 * @param teacherId za identifikaciju nastavnika
+	 * @param marks tipa studentmarksforsubjectdto za identifikaciju predmeta i ocena
+	 * @param result tipa bindingresult za validaciju dto
+	 * @return response ebntity u skladu sa odgovarajuceim rezultatom
+	 */
 	@Secured({ "ROLE_TEACHER", "ROLE_ADMIN" })
 	@RequestMapping(method = RequestMethod.DELETE, value = "/{teacherId}/subject/student/removeMark")
 	public ResponseEntity<?> deleteStudentMarkForSubject(@PathVariable Integer teacherId,
