@@ -280,6 +280,15 @@ public class TeacherController {
 		return teacherDao.deleteMarkOfStudent(teacherId, marks);
 	}
 
+	/**
+	 * menja ocenu uceniku iz predmeta
+	 * @param teacherId tipa Integer za identifikaciju nastavnika
+	 * @param marks tipa StudentMarksForSubjectDto za upisivanje nove ocene 
+	 * @param newMark tipa Integer vrednost nove ocene
+	 * @param result tipa BindingResult za ispitivanje validnosti dto
+	 * @return vraca response entity da li je validan dto ako jeste vraca response entity u skladu sa
+	 * izlazom meode teacherDao.changeMarkOfStudent
+	 */
 	@Secured({ "ROLE_TEACHER", "ROLE_ADMIN" })
 	@RequestMapping(method = RequestMethod.PUT, value = "/{teacherId}/subject/student/changeMark/newMark")
 	public ResponseEntity<?> changeStudentMarkForSubject(@PathVariable Integer teacherId,
@@ -292,7 +301,12 @@ public class TeacherController {
 		logger.info("Teacher changed mark of subject of the student");
 		return teacherDao.changeMarkOfStudent(teacherId, marks, newMark);
 	}
-	
+	/**
+	 * Izlistava sve ocene koje je dao nastavnik
+	 * @param id tipa Integer za identifikaciju nastavnikan
+	 * @return vraca resposne entity u skladu sa izlazom metode teacherDao.listAllMarksOfTeacher ili
+	 * repsonse entity da natavnik nije pronadjen
+	 */
 	@Secured({ "ROLE_TEACHER", "ROLE_ADMIN" })
 	@RequestMapping(method=RequestMethod.GET, value="/{id}/allmarks")
 	public ResponseEntity<?> listAllTeacherMarks(@PathVariable Integer id){

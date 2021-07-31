@@ -67,7 +67,7 @@ public class ParentController {
 
 	@Autowired
 	ParentDao parentDao;
-	
+
 	@Autowired
 	StudentDao studentDao;
 
@@ -236,6 +236,13 @@ public class ParentController {
 		return parentDao.setStudentToParent(id, studentId);
 	}
 
+	/**
+	 * 
+	 * @param id        tipa Integer za identifikaciju roditelja
+	 * @param studentId tipa Integer za identifikaciju ucenika
+	 * @return repsonse entity u skladu sa rezultatom metode
+	 *         parentDao.removeStudentFromParent
+	 */
 	@Secured("ROLE_ADMIN")
 	@RequestMapping(method = RequestMethod.DELETE, value = "/admin/{id}/student/studentId")
 	public ResponseEntity<?> deleteStudentFromParent(@PathVariable Integer id, @RequestParam Integer studentId) {
@@ -244,6 +251,14 @@ public class ParentController {
 		return parentDao.removeStudentFromParent(id, studentId);
 	}
 
+	/**
+	 * 
+	 * @param id     tipa Integer id za identifikaciju roditljea
+	 * @param marks  tipa StudenMarksForSubjectDto za identifikaciju predmeta
+	 * @param result tipa BindingResult za validaciju dto
+	 * @return repsonse entity u skladu sa validacijom i izvrsenjem metode
+	 *         parentDao.seeMarksForChiled
+	 */
 	@Secured({ "ROLE_PARENT", "ROLE_ADMIN" })
 	@RequestMapping(method = RequestMethod.GET, value = "/{id}/ChildMarksFromSubject")
 	public ResponseEntity<?> getMarksFromSubjectForChild(@PathVariable Integer id,
@@ -257,21 +272,26 @@ public class ParentController {
 		return parentDao.seeMarksForChiled(id, marks);
 	}
 
-	// ispisuje podatke za ucenike ali bez ocene???? nije provera da li ima ucenika, vraca praznu listu
+	/**
+	 * Ipsisuje roditljeu sve ocene deteta
+	 * 
+	 * @param id        tipa Integer za identifikaciju roditelja
+	 * @param studentId tipa Integer za identifikaciju ucenika
+	 * @return response entity u skladu sa ima roditelja i rezultatom metode
+	 *         studentDao.getMarksForAllSubjects
+	 */
 	@Secured({ "ROLE_PARENT", "ROLE_ADMIN" })
 	@RequestMapping(method = RequestMethod.GET, value = "/{id}/child")
-		public ResponseEntity<?> getAllMarksFromSubjectForChild(@PathVariable Integer id, 
-			@RequestParam Integer studentId) {
-		ParentEntity parent=new ParentEntity();
-		Optional<ParentEntity> op= parentRepository.findById(id);
-		if(op.isPresent()) {
+	public ResponseEntity<?> getAllMarksFromSubjectForChild(@PathVariable Integer id, @RequestParam Integer studentId) {
+		ParentEntity parent = new ParentEntity();
+		Optional<ParentEntity> op = parentRepository.findById(id);
+		if (op.isPresent()) {
 			logger.info("Parent or admin listed all marks of a student");
 			return studentDao.getMarksFoAllSubjects(studentId);
-		}
-		else 
+		} else
 			logger.error("Parent not found");
 		return new ResponseEntity<RESTError>(new RESTError(1, "Parent not found"), HttpStatus.NOT_FOUND);
-		
+
 	}
 
 }

@@ -1,0 +1,4 @@
+name, email
+tanja, tanjabcn@jmail.com
+ivan,idoskovic@jmail.com
+Mika, mika@jmail.com

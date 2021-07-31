@@ -192,7 +192,7 @@ public class TeacherDaoImpl implements TeacherDao {
 							email.setText(mark.toString() + " " + "teacher: " + teacher.getFirstName() + " "
 									+ teacher.getLastName());
 							emailService.sendSimpleMessage(email);
-							logger.info("Email with new sent to students parent");
+							logger.info("Email with new mark sent to students parent");
 							return new ResponseEntity<>("Mark given", HttpStatus.OK);
 						}
 

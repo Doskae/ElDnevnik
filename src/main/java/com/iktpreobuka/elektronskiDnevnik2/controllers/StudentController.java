@@ -193,6 +193,12 @@ public class StudentController {
 
 	}
 
+	/**
+	 * dodaje predmet uceniku
+	 * @param id tipa Integer za identifikovanje ucenika
+	 * @param subjectId tipa Integer za identifikovanje predmeta
+	 * @return response entity u skladu sa izlazom metode studentDao.setSubjecToStudent
+	 */
 	@Secured("ROLE_ADMIN")
 	@RequestMapping(method = RequestMethod.PUT, value = "/admin/{id}/subject/subjectId")
 	public ResponseEntity<?> addSubjectToStudent(@PathVariable Integer id, @RequestParam Integer subjectId) {
@@ -200,6 +206,12 @@ public class StudentController {
 		return studentDao.setSubjectToStudent(id, subjectId);
 	}
 
+	/**
+	 * brise predmet od ucenika
+	 * @param id tipa Integer za identifikaciju ucenika
+	 * @param subjectId tipa Integer za identifikaciju predmeta
+	 * @return response entity u skladu sa izlazom metode studentDao.removeSubjectFromStudent
+	 */
 	@Secured("ROLE_ADMIN")
 	@RequestMapping(method = RequestMethod.DELETE, value = "/admin/{id}/subject/subjectId")
 	public ResponseEntity<?> deleteSubjectFromStudent(@PathVariable Integer id, @RequestParam Integer subjectId) {
@@ -207,7 +219,12 @@ public class StudentController {
 		return studentDao.removeSubjecFromStudent(id, subjectId);
 	}
 
-	// ne radi nece da brise
+	/**
+	 * Brise ucenika od roditelja
+	 * @param id tipa Integer za identifikaciju ucenika
+	 * @param parentId tipa Integer za identifikaciju roditelja
+	 * @return response entity u skladu sa izlazom metode studentDao.removeParentFromStudent
+	 */
 	@Secured("ROLE_ADMIN")
 	@RequestMapping(method = RequestMethod.PUT, value = "/admin/{id}/parent/parentId")
 	public ResponseEntity<?> deleteStudentFromParent(@PathVariable Integer id, @RequestParam Integer parentId) {
@@ -215,6 +232,12 @@ public class StudentController {
 		return studentDao.removeParentFromStudent(id, parentId);
 	}
 
+	/**
+	 * pronalazi ucenika prema imenau i prezimenu
+	 * @param firstName tipa String za pronalazenje prema imenu
+	 * @param lastName tipa String za pronalazenje prema prezimenu
+	 * @return response entity u skladu sa time da li je pronadjen ili ne
+	 */
 	@Secured("ROLE_ADMIN")
 	@RequestMapping(method = RequestMethod.GET, value = "/admin/find-by-firstname-and-lastname")
 	public ResponseEntity<?> findStudentByNameAndLastName(@RequestParam("First name") String firstName,

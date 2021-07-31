@@ -51,9 +51,15 @@ public class EmailController {
 			logger.error(createErrorMessage(result));
 			return new ResponseEntity<>(createErrorMessage(result), HttpStatus.BAD_REQUEST);
 		}
-		emailService.sendSimpleMessage(object);
-		logger.error("Simple email sent");
-		return new ResponseEntity<>("Simple email sent", HttpStatus.OK);
+		try {
+			emailService.sendSimpleMessage(object);
+			logger.error("Simple email sent");
+			return new ResponseEntity<>("Simple email sent", HttpStatus.OK);
+		} catch (Exception e) {
+			logger.warn("Email not sent" + e.toString());
+			e.printStackTrace();
+			return new ResponseEntity<>("Email not sent " + e.toString(), HttpStatus.BAD_REQUEST);
+		}
 	}
 
 	@RequestMapping(method = RequestMethod.POST, value = "/emailLog")
@@ -62,8 +68,14 @@ public class EmailController {
 			logger.error("Error, email not valid");
 			return new ResponseEntity<>(createErrorMessage(result), HttpStatus.BAD_REQUEST);
 		}
-		emailService.sendMessageWithAttachment(object, PATH_TO_ATTACHMENT);
-		logger.info("Log sent as email ");
-		return new ResponseEntity<>("Email  with log sent", HttpStatus.OK);
+		try {
+			emailService.sendMessageWithAttachment(object, PATH_TO_ATTACHMENT);
+			logger.info("Log sent as email ");
+			return new ResponseEntity<>("Email  with log sent", HttpStatus.OK);
+		} catch (Exception e) {
+			logger.warn("Email not sent" + e.toString());
+			e.printStackTrace();
+			return new ResponseEntity<>("Email not sent " + e.toString(), HttpStatus.BAD_REQUEST);
+		}
 	}
 }

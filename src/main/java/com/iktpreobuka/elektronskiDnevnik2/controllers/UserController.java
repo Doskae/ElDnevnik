@@ -71,6 +71,11 @@ public class UserController {
 	 * @return vraća se lista svih korisnika u vidu entiteta, za sada
 	 */
 
+	/**
+	 * admin izlistava sve korisnike
+	 * 
+	 * @return response entity sa listom ili da je lista prazna
+	 */
 	@Secured("ROLE_ADMIN")
 	@JsonView(Views.AdminView.class)
 	@RequestMapping(method = RequestMethod.GET)
@@ -91,12 +96,12 @@ public class UserController {
 	 * dodavanje korisnika, bez uloge, napravio userValidator za role, ali ne radi
 	 * kako treba
 	 * 
-	 * @param user
-	 * @param result
-	 * @return
+	 * @param user   tipa UserRegistrationDTO za unos novog korisnika
+	 * @param result tipa BindingResutl za proveru validnosti dto
+	 * @return response entity da je los dto ili response entity da je dodat nov
+	 *         user
 	 */
 
-	
 	@Secured("ROLE_ADMIN")
 	@RequestMapping(method = RequestMethod.POST)
 	public ResponseEntity<?> addNewUser(@Valid @RequestBody UserRegistrationDTO user, BindingResult result) {
@@ -125,10 +130,16 @@ public class UserController {
 	 * upisuje logger.info da je obrisan user, ako ne pronadje user vraća
 	 * logger.error user not found i custom RESTError
 	 * 
-	 * @param id
-	 * @return
+	 * @param id tipa Integer za identifikaciju user
+	 * @return response entity da li pronadje i da je obrisan
 	 */
 
+	/**
+	 * brisanje korisnika po id
+	 * 
+	 * @param id tipa Integer za brisanje userentity
+	 * @return vraca response entity da li nadjen i da li je obrisan
+	 */
 	@Secured("ROLE_ADMIN")
 	@RequestMapping(method = RequestMethod.DELETE, value = "/{id}")
 	public ResponseEntity<?> deleteUserById(@PathVariable Integer id) {
@@ -149,7 +160,7 @@ public class UserController {
 	/**
 	 * postavlja korisnika sa ulogom nastavnika
 	 * 
-	 * @param id
+	 * @param id tipa Integer za identifikovanje usera
 	 * @return response entity da je postavljan kao teacher ili response entity da
 	 *         nije pronađen
 	 */
@@ -176,7 +187,7 @@ public class UserController {
 	/**
 	 * postavlja korisnika sa ulogom parent
 	 * 
-	 * @param id
+	 * @param id tipa Integer za identifikaciju user
 	 * @return response entity da je postavljan kao parent ili response entity da
 	 *         nije pronađen
 	 */
@@ -204,7 +215,7 @@ public class UserController {
 	/**
 	 * postavljanje user za student
 	 * 
-	 * @param id
+	 * @param id tipa Integer za identifikaciju user
 	 * @return response entity da je postavljan kao parent ili response entity da
 	 *         nije pronađen
 	 */
@@ -309,9 +320,18 @@ public class UserController {
 		}
 	}
 
+	/**
+	 * podesavanje parametara za korisnika kao roditelja
+	 * 
+	 * @param parentId tipa Integer za identifikaciju roditelja
+	 * @param email    tipa String za dodavanja email
+	 * @return resposne entity u skladu sa tim da li je pronadje korisnik ili ne i
+	 *         da je izmenjen ako je pronadjen
+	 */
 	@Secured("ROLE_ADMIN")
 	@RequestMapping(method = RequestMethod.PUT, value = "/parent/set-user/{parentId}")
 	public ResponseEntity<?> setUserParamsOfParent(@PathVariable Integer parentId, @RequestParam String email) {
+
 		logger.info("Admin set user parameters through parent id");
 		UserEntity user = new UserEntity();
 		ParentEntity parent = new ParentEntity();

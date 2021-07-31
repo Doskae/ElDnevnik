@@ -44,83 +44,101 @@ public class MarkController {
 	@Autowired
 	MarkRepository markRepository;
 
+	/**
+	 * izlistavanje svih korisnika
+	 * 
+	 * @return response entity da li su ilzlistani ili je lista prazna
+	 */
 	@Secured("ROLE_ADMIN")
 	@RequestMapping(method = RequestMethod.GET, value = "/admin")
-	
 	public ResponseEntity<?> getAllMarks() {
 		logger.info("Admin listed all users");
 		List<MarkEntity> list = new ArrayList<MarkEntity>();
-		list=(List<MarkEntity>) markRepository.findAll();
-		if(list.isEmpty()) {
+		list = (List<MarkEntity>) markRepository.findAll();
+		if (list.isEmpty()) {
 			return new ResponseEntity<String>("List of marks is empty", HttpStatus.OK);
 		}
 		return new ResponseEntity<List<MarkEntity>>((List<MarkEntity>) markRepository.findAll(), HttpStatus.OK);
 	}
+
 	/**
 	 * Dodavanje ocene
-	 * @param newMark MarkRegistrationDto
-	 * @param result
-	 * @return dodata ocena ili greška
+	 * 
+	 * @param newMark MarkRegistrationDto za ubacianje ocene
+	 * @param result  tipa BindingResult za validaciju dto body
+	 * @return response entity dodata ocena ili greska
 	 */
 	@Secured("ROLE_ADMIN")
 	@RequestMapping(method = RequestMethod.POST, value = "/admin")
-	public ResponseEntity<?> addMark(@Valid @RequestBody MarkRegistrationDto newMark, BindingResult result){
+	public ResponseEntity<?> addMark(@Valid @RequestBody MarkRegistrationDto newMark, BindingResult result) {
 		if (result.hasErrors()) {
 			logger.error("Error, bad request" + result.toString());
 			return new ResponseEntity<>(createErrorMessage(result), HttpStatus.BAD_REQUEST);
-		} 
-		MarkEntity mark= new MarkEntity();
+		}
+		MarkEntity mark = new MarkEntity();
 		mark.setValue(newMark.getValue());
 		mark.setDescription(newMark.getDescription());
 		markRepository.save(mark);
 		logger.info("Admin added new mark");
 		return new ResponseEntity<MarkRegistrationDto>(newMark, HttpStatus.OK);
 	}
-	
+
+	/**
+	 * biranje ocene
+	 * 
+	 * @param id tipa Integer za identifikaciju ocene
+	 * @return ResponseEntity da li obrisana ili nije nadjena
+	 */
 	@Secured("ROLE_ADMIN")
 	@RequestMapping(method = RequestMethod.DELETE, value = "/admin/{id}")
-	public ResponseEntity<?>deleteMark(@PathVariable Integer id){
-		MarkEntity mark= new MarkEntity();
+	public ResponseEntity<?> deleteMark(@PathVariable Integer id) {
+		MarkEntity mark = new MarkEntity();
 		Optional<MarkEntity> op = markRepository.findById(id);
-		if(op.isPresent()) {
-			mark=markRepository.findById(id).get();
+		if (op.isPresent()) {
+			mark = markRepository.findById(id).get();
 			markRepository.delete(mark);
 			logger.info("Admin deleted mark");
-			return new ResponseEntity<>("Mark deleted",HttpStatus.OK);
-		}else {
+			return new ResponseEntity<>("Mark deleted", HttpStatus.OK);
+		} else {
 			logger.error("Mark not found");
-			return  new ResponseEntity<RESTError>(new RESTError(1, "Mark not found"), HttpStatus.NOT_FOUND);
+			return new ResponseEntity<RESTError>(new RESTError(1, "Mark not found"), HttpStatus.NOT_FOUND);
 		}
 	}
-	
-	@RequestMapping(method=RequestMethod.PUT, value="/admin/{id}")
-	public ResponseEntity<?>changeSubject(@Valid @RequestBody MarkRegistrationDto mk, @PathVariable Integer id,
-			BindingResult result){
+
+	/**
+	 * 
+	 * @param mk     tipa MarkRegistrationDto
+	 * @param id     tipa Integer za identifikaciju ocene
+	 * @param result tipa BindingResult za validaciju dto
+	 * @return response entity da li je MarkEntity izmenjen ili ne
+	 */
+	@Secured("ROLE_ADMIN")
+	@RequestMapping(method = RequestMethod.PUT, value = "/admin/{id}")
+	public ResponseEntity<?> changeMark(@Valid @RequestBody MarkRegistrationDto mk, @PathVariable Integer id,
+			BindingResult result) {
 		if (result.hasErrors()) {
 			logger.error("Error, bad request" + result.toString());
 			return new ResponseEntity<>(createErrorMessage(result), HttpStatus.BAD_REQUEST);
 		}
 		MarkEntity mark = new MarkEntity();
-		Optional <MarkEntity> op = markRepository.findById(id);
-		if(op.isPresent()) {
-			mark=markRepository.findById(id).get();
-			if(mk.getDescription()!=null) {
+		Optional<MarkEntity> op = markRepository.findById(id);
+		if (op.isPresent()) {
+			mark = markRepository.findById(id).get();
+			if (mk.getDescription() != null) {
 				mark.setDescription(mk.getDescription());
-				
+
 				logger.info("Admin changed description of the mark");
 			}
-			if(mk.getValue()!=null) {
+			if (mk.getValue() != null) {
 				mark.setValue(mk.getValue());
 				logger.info("Admin changed value of the mark");
 			}
 			markRepository.save(mark);
-			return new ResponseEntity<>("Mark changed",HttpStatus.OK);
-		}else {
+			return new ResponseEntity<>("Mark changed", HttpStatus.OK);
+		} else {
 			logger.error("Mark not found");
-			return  new ResponseEntity<RESTError>(new RESTError(1, "Subject not found"), HttpStatus.NOT_FOUND);
+			return new ResponseEntity<RESTError>(new RESTError(1, "Subject not found"), HttpStatus.NOT_FOUND);
 		}
 	}
-	
-	
 
 }

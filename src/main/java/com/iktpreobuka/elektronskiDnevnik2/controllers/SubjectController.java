@@ -50,7 +50,10 @@ public class SubjectController {
 	@Autowired
 	SubjectRepository subjectRepository;
 	
-	
+	/**
+	 * Izlistava sve predmete
+	 * @return resposne entity u skladu da li ima predmeta ili ne
+	 */
 	@Secured("ROLE_ADMIN")
 	@RequestMapping(method = RequestMethod.GET)
 	public ResponseEntity<?> getAllSubjects() {
@@ -117,11 +120,8 @@ public class SubjectController {
 	@Secured("ROLE_ADMIN")
 	@RequestMapping(method=RequestMethod.PUT, value="/{id}/fund")
 	public ResponseEntity<?> changeSubjectFund(@RequestParam ("newfund") @Min(value=1) @Max(value=5) int newFund,
-			@PathVariable Integer id, BindingResult result){
-		if (result.hasErrors()) {
-			logger.error("Error, bad request" + result.toString());
-			return new ResponseEntity<>(createErrorMessage(result), HttpStatus.BAD_REQUEST);
-		} 
+			@PathVariable Integer id){
+		
 		SubjectEntity subject = new SubjectEntity();
 		Optional <SubjectEntity> op = subjectRepository.findById(id);
 		if(op.isPresent()) {
@@ -135,15 +135,16 @@ public class SubjectController {
 			return  new ResponseEntity<RESTError>(new RESTError(1, "Subject not found"), HttpStatus.NOT_FOUND);
 		}
 	}
-		
+		/**
+		 * promena imena predmetea
+		 * @param name tipa String ne sme da bude prazan kako bi se promenilo imena
+		 * @param id tipa Integer za identifikaciju predmeta
+		 * @return response entity da li je promenjeno ime ili predmet nije nadjen
+		 */
 		@Secured("ROLE_ADMIN")
 		@RequestMapping(method=RequestMethod.PUT, value="/{id}/name")
-		public ResponseEntity<?> changeSubjectName(@RequestParam ("name") @NotEmpty String name, @PathVariable Integer id,
-				BindingResult result){
-			if (result.hasErrors()) {
-				logger.error("Error, bad request" + result.toString());
-				return new ResponseEntity<>(createErrorMessage(result), HttpStatus.BAD_REQUEST);
-			} 
+		public ResponseEntity<?> changeSubjectName(@RequestParam ("name") @NotEmpty String name, @PathVariable Integer id){
+		
 			SubjectEntity subject = new SubjectEntity();
 			Optional <SubjectEntity> op = subjectRepository.findById(id);
 			if(op.isPresent()) {
